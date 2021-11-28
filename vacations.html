@@ -229,8 +229,7 @@
 												<th class="text-center">Actions</th>
 											</tr>
 										</thead>
-										<tbody id="showData">
-										</tbody>
+										<tbody id="dataShow"></tbody>
 									</table>
 								</div>
 							</div>
@@ -357,12 +356,12 @@
 	<script>
 		$(function () {
 			$.ajax({
-				url: 'assets/js/json/vacationsPage/employee.json',
+				url: 'assets/js/json/data.json',
 				dataType: 'json',
 				cache: false,
 				success: function (data, status) {
 					$.each(data, function (index) {
-						$('#showData').append(
+						$('#dataShow').append(
 							`<tr>
 			<td> ${data[index].requestId} </td>
 			<td> ${data[index].employeeId}</td>

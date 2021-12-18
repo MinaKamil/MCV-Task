@@ -25,6 +25,7 @@
 
 	<!-- Theme JS files -->
 	<script src="assets/js/plugins/forms/styling/uniform.min.js"></script>
+
 	<script src="assets/js/main/app.js"></script>
 	<script src="assets/js/main/custom_page.js"></script>
 	<!-- /theme JS files -->
@@ -187,7 +188,9 @@
 				<div class="breadcrumb-line breadcrumb-line-light header-elements-md-inline">
 					<div class="d-flex">
 						<div class="breadcrumb">
-							<a href="index.html" class="breadcrumb-item active"><i class="icon-home2 mr-2"></i> Home</a>
+							<a href="index.html" class="breadcrumb-item"><i class="icon-home2 mr-2"></i> Home</a>
+							<a href="index.html" class="breadcrumb-item">Employees</a>
+							<span class="breadcrumb-item active">My profile</span>
 						</div>
 
 						<a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
@@ -200,11 +203,13 @@
 
 			<!-- Content area -->
 			<div class="content">
+				<!-- Invoice grid -->
 				<div class="row">
 					<div id="line_1"></div>
 					<div id="line_2"></div>
 					<div id="line_3"></div>
 				</div>
+				<!-- /invoice grid -->
 
 			</div>
 			<!-- /content area -->
@@ -244,7 +249,9 @@
 				cache: false,
 				success: function (data, status) {
 					// check BusID if empty
-					//data = data.filter(d => d.BusID !== "");
+					// data = data.filter(d => d.BusID !== "");
+					busCount = data.length;
+					$('#BusModalTotal').text(busCount);
 					let linesData = [...new Map(data.map(item => [item['LineID'], {
 						"LineID": item.LineID,
 						"LineName": item.LineName
@@ -253,28 +260,28 @@
 					linesData = linesData.sort((d1, d2) => (d1.LineID > d2.LineID) ? 1 : -1);
 
 					$.each(linesData, function (index, line) {
+
 						let stationsData = [...new Map(data.filter(d => d.LineID === line.LineID).map(
 							item => [item[
 								'StationID'], {
 								"StationID": item.StationID,
 								"StationName": item.StationName
 							}])).values()];
+
 						$.each(stationsData, function (index, station) {
+
 							let busesData = [...new Map(data.filter(d => d.LineID === line.LineID && d
 								.StationID === station.StationID).map(item => [item[
-								'BusID'], {
-								"BusID": item.BusID,
-								"BusModel": item.BusModel
-							}])).values()];
+								'BusID'], item])).values()];
+
 							station.Buses = busesData.sort((d1, d2) => (d1.BusID > d2.BusID) ? 1 : -1);
 						});
+
 						line.Stations = stationsData.sort((d1, d2) => (d1.StationID > d2.StationID) ? 1 : -1);
 					});
 
 					console.log(linesData);
-					// total buses for all lines
-					busCount = data.filter(d => d.BusID !== "").length;
-					$('#BusModalTotal').text(busCount);
+
 					// total lines
 					linesCount = linesData.length;
 					$('#totalLines').text(linesCount);
@@ -282,83 +289,82 @@
 					$.each(linesData, function (index, line) {
 						// total buses for per line
 						let busesCountPerLine = data.filter(d => d.BusID !== "" && d.LineID === line.LineID).length;
-						//Line Color
 						let lineColor;
 						if (line.LineID == 1) {
-							lineColor = "info";
+							lineColor = "blue"
 						} else if (line.LineID == 2) {
-							lineColor = "teal";
+							lineColor = "teal"
 						} else if (line.LineID == 3) {
-							lineColor = "blue";
+							lineColor = "blue"
 						} else {
-							lineColor = "success";
+							lineColor = "black"
 						}
-						divContent = `
-						<div class="card border-${lineColor}">
-							<div class="card-header bg-${lineColor} text-white header-elements-inline">
-								<h6 class="card-title">${line.LineName}</h6>
-								<div class="header-elements">
-									<div class="list-icons">
-										<a class="list-icons-item" data-action="collapse"></a>
-									</div>
+						divContent = `<div class="card border-left-3 border-left-${lineColor} rounded-left-0">
+								<div class="card-header">
+									<h6 class="card-title text-${lineColor}-400 text-bold">${line.LineName}</h6>
 								</div>
-							</div>
-							<div class="card-body">
-						<div class="table-responsive mb-3">
-							<table class="table table-bordered table-stripe">
-								<thead>
-									<tr>
-										<!-- total stations -->
-										<th class="col-3"><span class="badge bg-${lineColor} badge-pill">${line.Stations.length}</span> Station(s)</th>
-										<!-- total buses per line -->
-										<th class="col-9"><span class="badge bg-${lineColor} badge-pill">${busesCountPerLine}</span> Bus(es)
-											<!-- 
-												<div class="float-right text-${lineColor}">${line.LineName}</div>-->
-											</th>
-									</tr>
-								</thead>
-								<tbody class="table-hover">`;
-
+								<div class="card-body">
+									<div class="row">
+									`
 						$.each(line.Stations, function (index, station) {
-							divContent += `
-							<tr class="border-top-${lineColor}">
-								<td class="text-center">
-									<h6 class="mb-0"># ${station.StationID}</h6>
-									<div class="font-size-sm text-muted line-height-1">${station.StationName}</div>
-								</td>
-								<td>
-								<ul class="list list-unstyled mb-0 list-inline">`;
+							// total buses for per Station
+							let busesCountPerStation = station.Buses.filter(d => d.BusID !== "" &&
+								d.LineID === line.LineID).length;
+							divContent +=
+								`
+								<div class="col-xl-6">
+							<div class="card border-top-3 border-top-${lineColor} rounded-left-0">
+								<div class="card-body">
+									<div class="d-flex align-item-center flex-nowrap">
+										<div>
+											<h6 class="font-weight-semibold text-${lineColor}-400">${station.StationName}</h6>
+											<ul class="list list-unstyled mb-0 list-inline">
+											`;
 							$.each(station.Buses.filter(d => d.BusID !== ""), function (index, bus) {
-								divContent += `
+								divContent += `					
 								<li class="list-inline-item">
-								<div class="d-flex align-items-center">
-									<div class="mr-2 mb-1 ml-3">
-										<a href="#" class="btn bg-${lineColor} rounded-round btn-icon">
-											<i class="icon-bus"></i>
-										</a>
-									</div>
-									<div>
-										<a href="#" class="text-default font-weight-semibold letter-icon-title">${bus.BusModel}</a>
-										<div class="text-muted font-size-sm"><span class="badge badge-mark border-${lineColor} mr-1"></span>
-											# ${bus.BusID}
+									<div class="d-flex align-items-center">
+										<div class="mr-3">
+											<a href="#" class="btn bg-${lineColor}-400 rounded-round btn-icon btn-sm">
+												<i class="icon-bus"></i>
+												</a>
+											</div>
+										<div>
+											<a href="#" class="text-default font-weight-semibold letter-icon-title">${bus.BusModel}</a>
+											<div class="text-muted font-size-sm"><span class="badge badge-mark border-${lineColor} mr-1"></span>
+												#${bus.BusID}
+												</div>
+											</div>
 										</div>
-									</div>
-									</div>
 									</li>
 							`;
 							});
-							divContent += `
+							divContent += ` 
+								</ul>
 								</div>
-								</td>
-							</tr>
+								</div>
+								</div>
+								<div class="card-footer d-flex justify-content-between">
+									<span class="text-muted">Bus(es)</span>
+									<span>
+										<span class="text-muted ml-2">(${busesCountPerStation})</span>
+									</span>
+								</div>
+								</div>
+							</div>
 						`;
 						})
 						divContent += `
-								</tbody>
-							</table>
-							</div>
-							</div>
-						</div>`;
+						</div>
+						</div>
+						<div class="card-footer d-flex justify-content-between">
+							<span class="text-muted">(${line.Stations.length}) Station(s)</span>
+							<span>
+								<span class="text-muted ml-2">(${busesCountPerLine}) Bus(es)</span>
+							</span>
+						</div>
+						</div>
+						`
 						$('#line_' + line.LineID).addClass('col-lg-' + 12 / linesCount).append(divContent)
 					});
 				}

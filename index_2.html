@@ -142,13 +142,7 @@
 						<li class="nav-item">
 							<a href="index.html" class="nav-link active">
 								<i class="icon-home4"></i>
-								<span>Dashboard 1</span>
-							</a>
-						</li>
-						<li class="nav-item">
-							<a href="index2.html" class="nav-link">
-								<i class="icon-home4"></i>
-								<span>Dashboard 2</span>
+								<span>Dashboard</span>
 							</a>
 						</li>
 						<li class="nav-item nav-item-submenu">
@@ -204,11 +198,16 @@
 
 			<!-- Content area -->
 			<div class="content">
+
 				<!-- Invoice grid -->
 				<div class="row">
-					<div id="line_1"></div>
-					<div id="line_2"></div>
-					<div id="line_3"></div>
+					<div id="line_1">
+
+					</div>
+
+					<div id="line_2">
+
+					</div>
 				</div>
 				<!-- /invoice grid -->
 
@@ -249,124 +248,105 @@
 				dataType: 'json',
 				cache: false,
 				success: function (data, status) {
-					// check BusID if empty
-					// data = data.filter(d => d.BusID !== "");
-					busCount = data.length;
-					$('#BusModalTotal').text(busCount);
-					let linesData = [...new Map(data.map(item => [item['LineID'], {
-						"LineID": item.LineID,
-						"LineName": item.LineName
-					}])).values()];
-
-					linesData = linesData.sort((d1, d2) => (d1.LineID > d2.LineID) ? 1 : -1);
-
-					$.each(linesData, function (index, line) {
-
-						let stationsData = [...new Map(data.filter(d => d.LineID === line.LineID).map(
-							item => [item[
-								'StationID'], {
-								"StationID": item.StationID,
-								"StationName": item.StationName
-							}])).values()];
-
-						$.each(stationsData, function (index, station) {
-
-							let busesData = [...new Map(data.filter(d => d.LineID === line.LineID && d
-								.StationID === station.StationID).map(item => [item[
-								'BusID'], item])).values()];
-
-							station.Buses = busesData.sort((d1, d2) => (d1.BusID > d2.BusID) ? 1 : -1);
-						});
-
-						line.Stations = stationsData.sort((d1, d2) => (d1.StationID > d2.StationID) ? 1 : -1);
-					});
-
-					console.log(linesData);
-
-					// total lines
-					linesCount = linesData.length;
-					$('#totalLines').text(linesCount);
-
-					$.each(linesData, function (index, line) {
-						// total buses for per line
-						let busesCountPerLine = data.filter(d => d.BusID !== "" && d.LineID === line.LineID).length;
-						let lineColor;
-						if (line.LineID == 1) {
-							lineColor = "blue"
-						} else if (line.LineID == 2) {
-							lineColor = "teal"
-						} else if (line.LineID == 3) {
-							lineColor = "blue"
-						} else {
-							lineColor = "black"
-						}
-						divContent = `<div class="card border-left-3 border-left-${lineColor} rounded-left-0">
-								<div class="card-header">
-									<h6 class="card-title text-${lineColor}-400 text-bold">${line.LineName}</h6>
-								</div>
-								<div class="card-body">
-									<div class="row">
-									`
-						$.each(line.Stations, function (index, station) {
-							// total buses for per Station
-							let busesCountPerStation = station.Buses.filter(d => d.BusID !== "" &&
-								d.LineID === line.LineID).length;
-							divContent +=
-								`
-								<div class="col-xl-6">
-							<div class="card border-top-3 border-top-${lineColor} rounded-left-0">
-								<div class="card-body">
-									<div class="d-flex align-item-center flex-nowrap">
-										<div>
-											<h6 class="font-weight-semibold text-${lineColor}-400">${station.StationName}</h6>
-											<ul class="list list-unstyled mb-0 list-inline">
-											`;
-							$.each(station.Buses.filter(d => d.BusID !== ""), function (index, bus) {
-								divContent += `					
-								<li class="list-inline-item">
-									<div class="d-flex align-items-center">
-										<div class="mr-3">
-											<a href="#" class="btn bg-${lineColor}-400 rounded-round btn-icon btn-sm">
-												<i class="icon-bus"></i>
-												</a>
+					$.each(data, function (index) {
+						if (data[index].LineID == 1 && data[index].BusModel != '' && data[index].BusID !=
+							'') {
+							$('#line_1').addClass('col-lg-6').append(
+								` <div class="card border-left-3 border-left-danger rounded-left-0">
+									<div class="card-body">
+										<div class="d-sm-flex align-item-sm-center flex-sm-nowrap">
+											<div>
+												<h6 class="font-weight-semibold text-danger-400">${data[index].LineName}</h6>
+												<ul class="list list-unstyled mb-0">
+													<li>BusModel: <span class="font-weight-semibold">${data[index].BusModel}</span>
+													</li>
+												</ul>
 											</div>
-										<div>
-											<a href="#" class="text-default font-weight-semibold letter-icon-title">${bus.BusModel}</a>
-											<div class="text-muted font-size-sm"><span class="badge badge-mark border-${lineColor} mr-1"></span>
-												#${bus.BusID}
-												</div>
+
+											<div class="text-sm-right mb-0 mt-3 mt-sm-0 ml-auto">
+												<h6 class="font-weight-semibold text-danger-400">${data[index].StationName}</h6>
+												<ul class="list list-unstyled mb-0">
+													<li>BusID #: <span class="font-weight-semibold">${data[index].BusID}</span></li>
+												</ul>
 											</div>
 										</div>
-									</li>
-							`;
-							});
-							divContent += ` 
-								</ul>
+									</div>
+
+									<div class="card-footer d-sm-flex justify-content-sm-between align-items-sm-center">
+										<span>
+											<span class="badge badge-mark border-danger mr-2"></span>
+											Due:
+											<span class="font-weight-semibold">2018/02/25</span>
+										</span>
+									</div>
 								</div>
+							`
+							);
+						} else if (data[index].LineID == 2 && data[index].BusModel != '' && data[index].BusID !=
+							'') {
+							$('#line_2').addClass('col-lg-6').append(`
+								<div class="card border-left-3 border-left-success rounded-left-0">
+									<div class="card-body">
+										<div class="d-sm-flex align-item-sm-center flex-sm-nowrap">
+											<div>
+												<h6 class="font-weight-semibold text-success">${data[index].LineName}</h6>
+												<ul class="list list-unstyled mb-0">
+													<li>BusModel: <span class="font-weight-semibold">${data[index].BusModel}</span></li>
+												</ul>
+											</div>
+	
+											<div class="text-sm-right mb-0 mt-3 mt-sm-0 ml-auto">
+												<h6 class="font-weight-bolder text-success-300">${data[index].StationName}</h6>
+												<ul class="list list-unstyled mb-0">
+													<li>BusID #: <span class="font-weight-semibold">${data[index].BusID}</span></li>
+												</ul>
+											</div>
+										</div>
+									</div>
+	
+									<div class="card-footer d-sm-flex justify-content-sm-between align-items-sm-center">
+										<span>
+											<span class="badge badge-mark border-success mr-2"></span>
+											Due:
+											<span class="font-weight-semibold">2018/03/24</span>
+										</span>
+									</div>
 								</div>
+								`)
+						} else if (data[index].BusModel != '' && data[index].BusID !=
+							'') {
+							$('#line_2').append(`
+							<div class="card border-left-3 border-left-blue rounded-left-0">
+								<div class="card-body">
+									<div class="d-sm-flex align-item-sm-center flex-sm-nowrap">
+										<div>
+											<h6 class="font-weight-semibold text-blue">${data[index].LineName}</h6>
+											<ul class="list list-unstyled mb-0">
+												<li>BusModel: <span class="font-weight-semibold">${data[index].BusModel}</span></li>
+											</ul>
+										</div>
+
+										<div class="text-sm-right mb-0 mt-3 mt-sm-0 ml-auto">
+											<h6 class="font-weight-bolder text-blue-300">${data[index].StationName}</h6>
+											<ul class="list list-unstyled mb-0">
+												<li>BusID #: <span class="font-weight-semibold">${data[index].BusID}</span></li>
+											</ul>
+										</div>
+									</div>
 								</div>
-								<div class="card-footer d-flex justify-content-between">
-									<span class="text-muted">Bus(es)</span>
+
+								<div class="card-footer d-sm-flex justify-content-sm-between align-items-sm-center">
 									<span>
-										<span class="text-muted ml-2">(${busesCountPerStation})</span>
+										<span class="badge badge-mark border-blue	 mr-2"></span>
+										Due:
+										<span class="font-weight-semibold">2018/03/24</span>
 									</span>
 								</div>
-								</div>
 							</div>
-						`;
-						})
-						divContent += `
-						</div>
-						</div>
-						<div class="card-footer d-flex justify-content-between">
-							<span class="text-muted">(${line.Stations.length}) Station(s)</span>
-							<span>
-								<span class="text-muted ml-2">(${busesCountPerLine}) Bus(es)</span>
-							</span>
-						</div>
-						</div>
-						`
-						$('#line_' + line.LineID).addClass('col-lg-' + 12 / linesCount).append(divContent)
+							`)
+						} else {
+							`<p class="text-center text-danger">There is no data to Show</p>`
+						}
 					});
 				}
 			});

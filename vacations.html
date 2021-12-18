@@ -141,17 +141,26 @@
 						<li class="nav-item-header">
 							<div class="text-uppercase font-size-xs line-height-xs">Main</div> <i class="icon-menu" title="Main"></i>
 						</li>
-						<!-- <li class="nav-item">
+						<li class="nav-item-header">
+							<div class="text-uppercase font-size-xs line-height-xs">Main</div> <i class="icon-menu" title="Main"></i>
+						</li>
+						<li class="nav-item">
 							<a href="index.html" class="nav-link">
 								<i class="icon-home4"></i>
-								<span>Dashboard</span>
+								<span>Dashboard 1</span>
 							</a>
-						</li> -->
+						</li>
+						<li class="nav-item">
+							<a href="index2.html" class="nav-link">
+								<i class="icon-home4"></i>
+								<span>Dashboard 2</span>
+							</a>
+						</li>
 						<li class="nav-item nav-item-submenu nav-item-expanded nav-item-open">
 							<a href="#" class="nav-link"><i class="icon-stack"></i> <span>Employees</span></a>
 
 							<ul class="nav nav-group-sub" data-submenu-title="Starter kit">
-								<li class="nav-item"><a href="index.html" class="nav-link">My Profile</a></li>
+								<li class="nav-item"><a href="Myprofile.html" class="nav-link">My Profile</a></li>
 								<li class="nav-item"><a href="vacations.html" class="nav-link active">Vacations</a></li>
 							</ul>
 						</li>
@@ -363,27 +372,27 @@
 					$.each(data, function (index) {
 						$('#dataShow').append(
 							`<tr>
-			<td> ${data[index].requestId} </td>
-			<td> ${data[index].employeeId}</td>
-			<td> ${data[index].vacationFrom} </td>
-			<td> ${data[index].vacationTo} </td>
-			<td> ${data[index].reason} </td>
-			<td class="text-center">
-				<div class="list-icons">
-					<div class="dropdown">
-						<a href="#" class="list-icons-item" data-toggle="dropdown">
-							<i class="icon-menu9"></i>
-						</a>
+								<td> ${data[index].requestId} </td>
+								<td> ${data[index].employeeId}</td>
+								<td> ${data[index].vacationFrom} </td>
+								<td> ${data[index].vacationTo} </td>
+								<td> ${data[index].reason} </td>
+								<td class="text-center">
+									<div class="list-icons">
+										<div class="dropdown">
+											<a href="#" class="list-icons-item" data-toggle="dropdown">
+												<i class="icon-menu9"></i>
+											</a>
 
-						<div class="dropdown-menu dropdown-menu-right">
-							<a href="#" class="dropdown-item"><i class="icon-file-pdf"></i> Export to .pdf</a>
-							<a href="#" class="dropdown-item"><i class="icon-file-excel"></i> Export to .csv</a>
-							<a href="#" class="dropdown-item"><i class="icon-file-word"></i> Export to .doc</a>
-						</div>
-					</div>
-				</div>
-			</td>
-		</tr>`
+											<div class="dropdown-menu dropdown-menu-right">
+												<a href="#" class="dropdown-item"><i class="icon-file-pdf"></i> Export to .pdf</a>
+												<a href="#" class="dropdown-item"><i class="icon-file-excel"></i> Export to .csv</a>
+												<a href="#" class="dropdown-item"><i class="icon-file-word"></i> Export to .doc</a>
+											</div>
+										</div>
+									</div>
+								</td>
+							</tr>`
 						);
 					});
 				}
